@@ -1,0 +1,10 @@
+BasedOnStyle: Google
+IndentWidth: 4
+
+Language: Cpp
+ColumnLimit: 120
+
+FixNamespaceComments: true
+
+AccessModifierOffset: -4
+IndentAccessModifiers: false

@@ -1,0 +1,10 @@
+.python-version
+/.venv
+/.cache
+/.vscode
+*.json
+/build
+/data
+*.ipynb
+/test_package
+/Testing
