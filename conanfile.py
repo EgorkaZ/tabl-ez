@@ -2,17 +2,17 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 
 
-class tablesRecipe(ConanFile):
-    name = "tables"
+class tablezRecipe(ConanFile):
+    name = "tablez"
     version = "0.1.0"
     package_type = "library"
 
     # Optional metadata
-    license = "<Put the package license here>"
-    author = "<Put your name here> <And your email here>"
-    url = "<Package recipe repository url here, for issues about the package>"
-    description = "<Description of tables package here>"
-    topics = ("<Put some tag here>", "<here>", "<and here>")
+    license = "MIT"
+    author = "Egor Zudin xd5ijwhdi@mozmail.com"
+    url = "https://github.com/EgorkaZ/tabl-ez"
+    description = "columnar vector of tuples"
+    topics = ("SoA", "structure of arrays")
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
@@ -54,5 +54,5 @@ class tablesRecipe(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = ["tables"]
+        self.cpp_info.libs = ["tablez"]
 

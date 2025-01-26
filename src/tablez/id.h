@@ -3,7 +3,7 @@
 #include <cassert>
 #include <cstdint>
 
-namespace tables {
+namespace tablez {
 
 class Id {
 public:

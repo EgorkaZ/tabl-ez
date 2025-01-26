@@ -6,11 +6,11 @@
 #include <type_traits>
 #include <utility>
 
-#include <tables/id.h>
+#include <tablez/id.h>
 #include "blob.h"
 #include "index.h"
 
-namespace tables::sparse {
+namespace tablez::sparse {
 
 namespace detail {
 
@@ -186,4 +186,4 @@ private:
     std::unique_ptr<uint32_t[]> free_; // acts as a stack of free indicies
     std::tuple<Blob<Ts>...> columns_;
 };
-}  // namespace tables
+}  // namespace tablez

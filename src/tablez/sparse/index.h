@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tables/id.h>
+#include <tablez/id.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -8,7 +8,7 @@
 #include <ranges>
 #include <span>
 
-namespace tables::sparse {
+namespace tablez::sparse {
 
 class IndexIter;
 class IndexIterEnd {};
@@ -184,4 +184,4 @@ inline IndexIter Index::begin() const noexcept { return IndexIter{gens_, capacit
 inline IndexIterEnd Index::end() const noexcept { return IndexIterEnd{}; }
 
 static_assert(std::ranges::range<Index>);
-}  // namespace tables::sparse
+}  // namespace tablez::sparse

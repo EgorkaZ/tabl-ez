@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace tables::sparse {
+namespace tablez::sparse {
 
 // owns nothing, doesn't know it's size
 template <class T>
@@ -78,4 +78,4 @@ public:
 private:
     Storage *data_ = nullptr;
 };
-}  // namespace tables
+}  // namespace tablez

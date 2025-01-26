@@ -1,4 +1,4 @@
-#include <tables/sparse/blob.h>
+#include <tablez/sparse/blob.h>
 
 #include <gtest/gtest.h>
 
@@ -37,7 +37,7 @@ DestructionChecker::DestructionChecker(SparseBlobTest *owner, uint32_t idx) : ow
 DestructionChecker::~DestructionChecker() { owner->Deregister(this); }
 
 TEST_F(SparseBlobTest, base) {
-    auto blob = tables::sparse::Blob<DestructionChecker>::with_capacity(32);
+    auto blob = tablez::sparse::Blob<DestructionChecker>::with_capacity(32);
 
     blob.init_at(1, this, 1);
     ASSERT_EQ(blob.assume_init_at(1).idx, 1);

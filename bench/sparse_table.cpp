@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>
-#include <tables/sparse/table.h>
+#include <tablez/sparse/table.h>
 
 #include <random>
 
@@ -41,7 +41,7 @@ std::mt19937 &RNG() {
 }
 
 void BM_TableInsert(benchmark::State &state) {
-    tables::sparse::Table<int, bool, double, std::string> table;
+    tablez::sparse::Table<int, bool, double, std::string> table;
     for (auto _ : state) {
         state.PauseTiming();
         auto [i, b, d, s] = generate_tuple(RNG());
@@ -62,21 +62,21 @@ void BM_VecPushBack(benchmark::State &state) {
 
 void BM_TableSum(benchmark::State &state) {
     auto data = generate_data(RNG(), state.range(0));
-    auto table = tables::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
+    auto table = tablez::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
     for (auto &[i, b, d, s] : data) {
         table.insert(i, b, d, std::move(s));
     }
 
     for (auto _ : state) {
         int64_t sum = 0;
-        table.column<int>().for_each([&sum](tables::Id, int val) { sum += val; });
+        table.column<int>().for_each([&sum](tablez::Id, int val) { sum += val; });
         benchmark::DoNotOptimize(sum);
     }
 }
 
 void BM_TableSumRange(benchmark::State &state) {
     auto data = generate_data(RNG(), state.range(0));
-    auto table = tables::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
+    auto table = tablez::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
     for (auto &[i, b, d, s] : data) {
         table.insert(i, b, d, std::move(s));
     }
@@ -92,7 +92,7 @@ void BM_TableSumRange(benchmark::State &state) {
 
 void BM_TableSumIterRange(benchmark::State &state) {
     auto data = generate_data(RNG(), state.range(0));
-    auto table = tables::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
+    auto table = tablez::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
     for (auto &[i, b, d, s] : data) {
         table.insert(i, b, d, std::move(s));
     }

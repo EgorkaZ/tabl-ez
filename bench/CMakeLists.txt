@@ -1,8 +1,8 @@
 find_package(benchmark REQUIRED)
 
-file(GLOB TABLES_BENCH_SRC "*.cpp")
+file(GLOB TABLEZ_BENCH_SRC "*.cpp")
 
-add_executable(tables_bench ${TABLES_BENCH_SRC})
-target_link_libraries(tables_bench tables benchmark::benchmark benchmark::benchmark_main)
+add_executable(tablez_bench ${TABLEZ_BENCH_SRC})
+target_link_libraries(tablez_bench tablez benchmark::benchmark benchmark::benchmark_main)
 
-add_test(NAME tables_bench COMMAND tables_bench)
+add_test(NAME tablez_bench COMMAND tablez_bench)

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <tables/sparse/table.h>
+#include <tablez/sparse/table.h>
 
 using namespace testing;
 
@@ -38,7 +38,7 @@ MATCHER_P(ColumnIs, expected, "") {
 };
 
 TEST_F(SparseTableTest, base) {
-    tables::sparse::Table<int, double, bool> table;
+    tablez::sparse::Table<int, double, bool> table;
 
     ASSERT_EQ(table.count(), 0);
     ASSERT_EQ(table.capacity(), 0);
@@ -65,7 +65,7 @@ TEST_F(SparseTableTest, base) {
 }
 
 TEST_F(SparseTableTest, strings) {
-    tables::sparse::Table<int, std::string> table;
+    tablez::sparse::Table<int, std::string> table;
 
     table.insert(1, "kek");
     auto lol = table.insert(2, "lol");
