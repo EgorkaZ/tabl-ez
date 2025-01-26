@@ -1,4 +1,4 @@
-# Tables
+# Tabl-EZ
 
 Here are my experiments with strutures of arrays. Really I was just excited to try and implement them. Performance-wise they seem to deliver their promise of better single column iteration.
 
