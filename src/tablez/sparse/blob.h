@@ -32,7 +32,9 @@ public:
     }
 
     void destroy_at(uint32_t idx) noexcept(std::is_nothrow_destructible_v<T>) {
-        assume_init_at(idx).~T();
+        if constexpr (!std::is_trivially_destructible_v<T>) {
+            assume_init_at(idx).~T();
+        }
     }
 
     // will make space for at least new_capacity elements,
@@ -49,7 +51,9 @@ public:
             if (is_init(i)) {
                 auto &val = assume_init_at(i);
                 new (dst + i) T(std::move(val));
-                val.~T();
+                if constexpr (!std::is_trivially_destructible_v<T>) {
+                    val.~T();
+                }
             }
         }
         dealloc();
@@ -59,6 +63,9 @@ public:
     template <class IsInit>
         requires std::is_invocable_r_v<bool, IsInit, uint32_t>
     void destroy(uint32_t capacity, IsInit is_init) noexcept(std::is_nothrow_destructible_v<T>) {
+        if constexpr (std::is_trivially_destructible_v<T>) {
+            return;
+        }
         while (capacity-- != 0) {
             auto i = capacity;
             if (is_init(i)) {

@@ -1,6 +1,5 @@
-#include <tablez/sparse/blob.h>
-
 #include <gtest/gtest.h>
+#include <tablez/sparse/blob.h>
 
 #include <cstdint>
 #include <unordered_map>

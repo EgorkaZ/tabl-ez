@@ -2,6 +2,7 @@
 #include <tablez/sparse/table.h>
 
 #include <random>
+#include "tablez/dense/table.h"
 
 namespace {
 
@@ -40,8 +41,18 @@ std::mt19937 &RNG() {
     return rng;
 }
 
-void BM_TableInsert(benchmark::State &state) {
+void BM_SparseTableInsert(benchmark::State &state) {
     tablez::sparse::Table<int, bool, double, std::string> table;
+    for (auto _ : state) {
+        state.PauseTiming();
+        auto [i, b, d, s] = generate_tuple(RNG());
+        state.ResumeTiming();
+        table.insert(i, b, d, std::move(s));
+    }
+}
+
+void BM_DenseTableInsert(benchmark::State &state) {
+    tablez::dense::Table<int, bool, double, std::string> table;
     for (auto _ : state) {
         state.PauseTiming();
         auto [i, b, d, s] = generate_tuple(RNG());
@@ -60,7 +71,7 @@ void BM_VecPushBack(benchmark::State &state) {
     }
 }
 
-void BM_TableSum(benchmark::State &state) {
+void BM_SparseTableSum(benchmark::State &state) {
     auto data = generate_data(RNG(), state.range(0));
     auto table = tablez::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
     for (auto &[i, b, d, s] : data) {
@@ -74,34 +85,16 @@ void BM_TableSum(benchmark::State &state) {
     }
 }
 
-void BM_TableSumRange(benchmark::State &state) {
+void BM_DenseTableSum(benchmark::State &state) {
     auto data = generate_data(RNG(), state.range(0));
-    auto table = tablez::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
+    auto table = tablez::dense::Table<int, bool, double, std::string>::with_capacity(data.size());
     for (auto &[i, b, d, s] : data) {
         table.insert(i, b, d, std::move(s));
     }
 
     for (auto _ : state) {
         int64_t sum = 0;
-        for (auto [id, val] : table.column<int>().range()) {
-            sum += val;
-        }
-        benchmark::DoNotOptimize(sum);
-    }
-}
-
-void BM_TableSumIterRange(benchmark::State &state) {
-    auto data = generate_data(RNG(), state.range(0));
-    auto table = tablez::sparse::Table<int, bool, double, std::string>::with_capacity(data.size());
-    for (auto &[i, b, d, s] : data) {
-        table.insert(i, b, d, std::move(s));
-    }
-
-    for (auto _ : state) {
-        int64_t sum = 0;
-        for (auto [id, val] : table.column<int>().range()) {
-            sum += val;
-        }
+        table.for_each<int>([&sum](tablez::Id, int val) { sum += val; });
         benchmark::DoNotOptimize(sum);
     }
 }
@@ -118,12 +111,12 @@ void BM_VecSum(benchmark::State &state) {
     }
 }
 
-BENCHMARK(BM_TableInsert);
+BENCHMARK(BM_SparseTableInsert);
+BENCHMARK(BM_DenseTableInsert);
 BENCHMARK(BM_VecPushBack);
 
-BENCHMARK(BM_TableSum)->RangeMultiplier(2)->Range(1 << 4, 1 << 25);
-BENCHMARK(BM_TableSumRange)->RangeMultiplier(2)->Range(1 << 4, 1 << 25);
-BENCHMARK(BM_TableSumIterRange)->RangeMultiplier(2)->Range(1 << 4, 1 << 25);
-BENCHMARK(BM_VecSum)->RangeMultiplier(2)->Range(1 << 4, 1 << 25);
+BENCHMARK(BM_SparseTableSum)->RangeMultiplier(2)->Range(1 << 4, 1 << 23);
+BENCHMARK(BM_DenseTableSum)->RangeMultiplier(2)->Range(1 << 4, 1 << 23);
+BENCHMARK(BM_VecSum)->RangeMultiplier(2)->Range(1 << 4, 1 << 23);
 
 }  // namespace

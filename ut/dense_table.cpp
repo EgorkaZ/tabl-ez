@@ -1,10 +1,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <tablez/sparse/table.h>
+#include <tablez/dense/table.h>
 
 using namespace testing;
 
-class SparseTableTest : public Test {};
+class DenseTableTest : public Test {};
 
 MATCHER_P(ColumnIs, expected, "") {
     auto it = arg.begin();
@@ -36,8 +36,8 @@ MATCHER_P(ColumnIs, expected, "") {
     return true;
 };
 
-TEST_F(SparseTableTest, base) {
-    tablez::sparse::Table<int, double, bool> table;
+TEST_F(DenseTableTest, base) {
+    tablez::dense::Table<int, double, bool> table;
 
     ASSERT_EQ(table.count(), 0);
     ASSERT_EQ(table.capacity(), 0);
@@ -49,33 +49,34 @@ TEST_F(SparseTableTest, base) {
     ASSERT_EQ(table.count(), 3);
     ASSERT_EQ(table.capacity(), 4);
 
-    ASSERT_THAT(table.column<int>().range(), ColumnIs(std::array{1, 2, 3}));
-    ASSERT_THAT(table.column<double>().range(), ColumnIs(std::array{0.1, 0.2, 0.3}));
-    ASSERT_THAT(table.column<bool>().range(), ColumnIs(std::array{true, false, false}));
+    ASSERT_THAT(table.column<int>(), ColumnIs(std::array{1, 2, 3}));
+    ASSERT_THAT(table.column<double>(), ColumnIs(std::array{0.1, 0.2, 0.3}));
+    ASSERT_THAT(table.column<bool>(), ColumnIs(std::array{true, false, false}));
 
     ASSERT_TRUE(table.remove(fst));
     ASSERT_TRUE(table.remove(sec));
     ASSERT_EQ(table.count(), 1);
 
     table.insert(4, 0.4, true);
-    ASSERT_THAT(table.column<int>().range(), ColumnIs(std::array{4, 3}));
-    ASSERT_THAT(table.column<double>().range(), ColumnIs(std::array{0.4, 0.3}));
-    ASSERT_THAT(table.column<bool>().range(), ColumnIs(std::array{true, false}));
+    // NB! order is not really preserved
+    ASSERT_THAT(table.column<int>(), ColumnIs(std::array{3, 4}));
+    ASSERT_THAT(table.column<double>(), ColumnIs(std::array{0.3, 0.4}));
+    ASSERT_THAT(table.column<bool>(), ColumnIs(std::array{false, true}));
 }
 
-TEST_F(SparseTableTest, strings) {
-    tablez::sparse::Table<int, std::string> table;
+TEST_F(DenseTableTest, strings) {
+    tablez::dense::Table<int, std::string> table;
 
     table.insert(1, "kek");
     auto lol = table.insert(2, "lol");
     table.insert(3, "three");
     table.insert(4, "four");
 
-    ASSERT_THAT(table.column<int>().range(), ColumnIs(std::array{1, 2, 3, 4}));
-    ASSERT_THAT(table.column<std::string>().range(), ColumnIs(std::array{"kek", "lol", "three", "four"}));
+    ASSERT_THAT(table.column<int>(), ColumnIs(std::array{1, 2, 3, 4}));
+    ASSERT_THAT(table.column<std::string>(), ColumnIs(std::array{"kek", "lol", "three", "four"}));
 
     ASSERT_TRUE(table.remove(lol));
 
-    ASSERT_THAT(table.column<int>().range(), ColumnIs(std::array{1, 3, 4}));
-    ASSERT_THAT(table.column<std::string>().range(), ColumnIs(std::array{"kek", "three", "four"}));
+    ASSERT_THAT(table.column<int>(), ColumnIs(std::array{1, 4, 3}));
+    ASSERT_THAT(table.column<std::string>(), ColumnIs(std::array{"kek", "four", "three"}));
 }

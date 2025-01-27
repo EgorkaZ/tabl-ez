@@ -38,7 +38,7 @@ public:
         return Id{gens_[idx], idx};
     }
 
-    Id set_unchecked(uint32_t idx) noexcept {
+    Id push_unchecked(uint32_t idx) noexcept {
         assert(idx < capacity_);
         assert(!is_set(idx));
         assert(gens_[idx] < std::numeric_limits<uint32_t>::max());
@@ -48,14 +48,15 @@ public:
         return Id{gen, idx};
     }
 
-    Id reset_unchecked(Id id) noexcept {
-        assert(id.idx() < capacity_);
-        assert(is_set(id.idx()));
-        assert(id.gen() == gens_[id.idx()]);
-
-        uint32_t gen = ++gens_[id.idx()];
-        --count_;
-        return Id{gen, id.idx()};
+    bool try_remove(Id id) noexcept {
+        assert(id.idx() < capacity());
+        assert(!id.is_empty());
+        if (id.gen() == gens_[id.idx()]++) {  // invalidate
+            assert(count_ > 0);
+            --count_;
+            return true;
+        }
+        return false;
     }
 
     uint32_t capacity() const noexcept { return capacity_; }
@@ -78,7 +79,7 @@ public:
                });
     }
 
-    void reserve_for(uint32_t new_capacity) {
+    void reserve_at_least(uint32_t new_capacity) {
         assert(new_capacity >= capacity_);
         auto *new_gens = new uint32_t[new_capacity];
         for (uint32_t i = 0; i < capacity_; ++i) {
@@ -115,7 +116,11 @@ private:
 class IndexIter {
     friend class Index;
 
-    IndexIter(uint32_t *base, uint32_t capacity) : gen_base_{base}, gen_size_{capacity}, curr_{0} {}
+    IndexIter(uint32_t *base, uint32_t capacity) : gen_base_{base}, gen_size_{capacity}, curr_{0} {
+        while (curr_ < gen_size_ && (gen_ = gen_base_[curr_]) & Index::EMPTY_MASK) {
+            curr_++;
+        }
+    }
 
 public:
     using difference_type = int64_t;
